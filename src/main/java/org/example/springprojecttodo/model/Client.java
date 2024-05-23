@@ -26,4 +26,6 @@ public class Client {
     private String password;
 
     private Set<Task> tasks;
+
+    private ClientStatus status;
 }
