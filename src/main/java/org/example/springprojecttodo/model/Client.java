@@ -1,5 +1,11 @@
 package org.example.springprojecttodo.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,7 +22,10 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@Entity
 public class Client {
+    @Id
+    @GeneratedValue
     private UUID id;
 
     private String name;
@@ -25,7 +34,10 @@ public class Client {
 
     private String password;
 
+    @ToString.Exclude
+    @OneToMany(mappedBy = "client")
     private Set<Task> tasks;
 
+    @Enumerated(EnumType.STRING)
     private ClientStatus status;
 }

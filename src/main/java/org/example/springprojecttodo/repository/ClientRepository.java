@@ -18,4 +18,6 @@ public interface ClientRepository {
     void update(Client client);
 
     void delete(UUID id);
+
+    int countClients();
 }

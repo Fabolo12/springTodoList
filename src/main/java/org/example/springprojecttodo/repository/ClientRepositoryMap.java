@@ -1,7 +1,9 @@
 package org.example.springprojecttodo.repository;
 
+import lombok.extern.slf4j.Slf4j;
 import org.example.springprojecttodo.model.Client;
 import org.example.springprojecttodo.model.ClientStatus;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
@@ -11,9 +13,15 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
 
+@Profile("map")
 @Repository
+@Slf4j
 public class ClientRepositoryMap implements ClientRepository {
     private final Map<UUID, Client> db = new HashMap<>();
+
+    public ClientRepositoryMap() {
+        log.info("Use Map repository implementation");
+    }
 
     @Override
     public Client getClientById(final UUID id) {
@@ -51,5 +59,10 @@ public class ClientRepositoryMap implements ClientRepository {
                         System.out.printf("Client with id %s change status to %s%n",
                                 client.getId(), ClientStatus.INACTIVE
                         ));
+    }
+
+    @Override
+    public int countClients() {
+        return db.size();
     }
 }
