@@ -20,14 +20,14 @@ public class SpringProjectTodoApplication {
 
         System.out.println("Count of clients: " + clientService.countClients());
 
-        clientService.deleteClient(admin.getId());
+        /*clientService.deleteClient(admin.getId());
         System.out.println("Find after deleting: " + clientService.findByEmail("admin@gmail.com"));
 
         admin.setStatus(ClientStatus.ACTIVE);
         clientService.updateClient(admin);
 
         System.out.println("Get by id: " + clientService.getClient(admin.getId()));
-        System.out.println("Get all: " + clientService.getAll().count());
+        System.out.println("Get all: " + clientService.getAll().count());*/
     }
 
 }
