@@ -11,8 +11,10 @@ import org.springframework.context.ConfigurableApplicationContext;
 public class SpringProjectTodoApplication {
 
     public static void main(String[] args) {
-        final ConfigurableApplicationContext context = SpringApplication.run(SpringProjectTodoApplication.class, args);
+        SpringApplication.run(SpringProjectTodoApplication.class, args);
+    }
 
+    private static void internalUse(final ConfigurableApplicationContext context) {
         final ClientServiceI clientService = context.getBean(ClientServiceI.class);
         final Client admin = clientService.createAdmin();
 
@@ -20,14 +22,14 @@ public class SpringProjectTodoApplication {
 
         System.out.println("Count of clients: " + clientService.countClients());
 
-        /*clientService.deleteClient(admin.getId());
+        clientService.deleteClient(admin.getId());
         System.out.println("Find after deleting: " + clientService.findByEmail("admin@gmail.com"));
 
         admin.setStatus(ClientStatus.ACTIVE);
         clientService.updateClient(admin);
 
         System.out.println("Get by id: " + clientService.getClient(admin.getId()));
-        System.out.println("Get all: " + clientService.getAll().count());*/
+        System.out.println("Get all: " + clientService.getAll().count());
     }
 
 }

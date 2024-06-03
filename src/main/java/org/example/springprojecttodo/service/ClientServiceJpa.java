@@ -2,6 +2,7 @@ package org.example.springprojecttodo.service;
 
 import jakarta.transaction.Transactional;
 import org.example.springprojecttodo.annotation.LogTime;
+import org.example.springprojecttodo.exeption.EntityNotFound;
 import org.example.springprojecttodo.model.Client;
 import org.example.springprojecttodo.repository.ClientRepositorySpring;
 import org.example.springprojecttodo.service.creator.ClientCreator;
@@ -48,6 +49,10 @@ public class ClientServiceJpa implements ClientServiceI {
 
     @Transactional
     public void deleteClient(UUID id) {
+        if (!repository.existsById(id)) {
+            throw new EntityNotFound("Client/id: " + id);
+        }
+
         repository.delete(id);
     }
 
