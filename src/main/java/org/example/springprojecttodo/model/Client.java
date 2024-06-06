@@ -6,6 +6,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,10 +26,12 @@ import java.util.UUID;
 @ToString
 @Entity
 public class Client {
+    @NotNull
     @Id
     @GeneratedValue
     private UUID id;
 
+    @Size(min = 3, max = 50)
     private String name;
 
     private String email;

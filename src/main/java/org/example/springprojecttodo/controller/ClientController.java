@@ -1,12 +1,20 @@
 package org.example.springprojecttodo.controller;
 
+import jakarta.validation.Valid;
+import org.example.springprojecttodo.dto.ClientsFilter;
+import org.example.springprojecttodo.exeption.IllegalUserInputException;
 import org.example.springprojecttodo.model.Client;
 import org.example.springprojecttodo.service.ClientServiceI;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -18,15 +26,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/clients")
 public class ClientController {
-
-    // TODO 03.06.2024 sort
-    // pagination
-    // @ModelAttribute
-    // @Valid
 
     private final ClientServiceI clientService;
 
@@ -56,7 +60,13 @@ public class ClientController {
     }
 
     @PutMapping
-    public void updateClient(@RequestBody final Client client) {
+    public void updateClient(@Valid @RequestBody final Client client, final BindingResult result) {
+        if (result.hasErrors()) {
+            final String errorMessage = result.getFieldErrors().stream()
+                    .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                    .collect(Collectors.joining(", "));
+            throw new IllegalUserInputException(errorMessage);
+        }
         clientService.updateClient(client);
     }
 
@@ -71,7 +81,31 @@ public class ClientController {
     }
 
     @GetMapping
-    public List<Client> getClients() {
+    public List<Client> getClients(
+            @RequestParam(defaultValue = "email") final String sortField,
+            @RequestParam(defaultValue = "ASC") final Sort.Direction direction,
+            @RequestParam(required = false) final Integer page,
+            @RequestParam(required = false) final Integer size
+    ) {
+        final Sort sort = Sort.by(direction, sortField);
+
+        if (page != null && size != null) {
+            final Pageable pageable = PageRequest.of(page, size, sort);
+
+            Pageable.ofSize(size)
+                    .withPage(page);
+            return clientService.getAll(pageable).toList();
+
+        }
+
+        return clientService.getAll(sort).toList();
+    }
+
+    @GetMapping("/filtered")
+    public List<Client> getClients(
+            @ModelAttribute final ClientsFilter filter
+    ) {
+        System.out.println(filter);
         return clientService.getAll().toList();
     }
 

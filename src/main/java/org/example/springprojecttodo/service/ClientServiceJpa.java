@@ -8,11 +8,12 @@ import org.example.springprojecttodo.repository.ClientRepositorySpring;
 import org.example.springprojecttodo.service.creator.ClientCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 @Profile("spring-data")
 @Service
@@ -65,6 +66,16 @@ public class ClientServiceJpa implements ClientServiceI {
     }
 
     public Stream<Client> getAll() {
-        return StreamSupport.stream(repository.findAll().spliterator(), false);
+        return repository.findAll().stream();
+    }
+
+    @Override
+    public Stream<Client> getAll(final Sort sort) {
+        return repository.findAll(sort).stream();
+    }
+
+    @Override
+    public Stream<Client> getAll(final Pageable pageable) {
+        return repository.findAll(pageable).stream();
     }
 }
