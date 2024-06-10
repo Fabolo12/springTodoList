@@ -1,6 +1,7 @@
 package org.example.springprojecttodo.controller;
 
 import jakarta.validation.Valid;
+import org.apache.commons.lang3.StringUtils;
 import org.example.springprojecttodo.dto.ClientsFilter;
 import org.example.springprojecttodo.exeption.IllegalUserInputException;
 import org.example.springprojecttodo.model.Client;
@@ -46,11 +47,13 @@ public class ClientController {
 
     @GetMapping("/email/{email}")
     public Client findByEmail(@PathVariable final String email) {
+        checkEmail(email);
         return clientService.findByEmail(email);
     }
 
     @GetMapping("/v2/email/{client-email}")
     public ResponseEntity<Client> findByClientEmail(@PathVariable("client-email") final String email) {
+        checkEmail(email);
         return ResponseEntity.ok(clientService.findByEmail(email));
     }
 
@@ -112,5 +115,20 @@ public class ClientController {
     @GetMapping("/count")
     public int clientsCount() {
         return clientService.countClients();
+    }
+
+    private void checkEmail(final String email) {
+        if (StringUtils.isEmpty(email) || "null".equals(email)) {
+            throw new IllegalUserInputException("Email is empty");
+        }
+        if (email.length() < 3) {
+            throw new IllegalUserInputException("Email is too short");
+        }
+        if (email.length() > 20) {
+            throw new IllegalUserInputException("Email is too long");
+        }
+        if (!email.contains("@")) {
+            throw new IllegalUserInputException("Email is invalid");
+        }
     }
 }
