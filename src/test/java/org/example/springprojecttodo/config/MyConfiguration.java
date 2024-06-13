@@ -4,6 +4,8 @@ import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 import javax.sql.DataSource;
 
@@ -18,11 +20,9 @@ public class MyConfiguration {
 
     @Bean
     public DataSource dataSource() {
-        return DataSourceBuilder
-                .create()
-                .url("jdbc:postgresql://localhost:5432/test")
-                .username("postgres")
-                .password("root")
+        return new EmbeddedDatabaseBuilder()
+                .generateUniqueName(true)
+                .setType(EmbeddedDatabaseType.H2)
                 .build();
     }
 

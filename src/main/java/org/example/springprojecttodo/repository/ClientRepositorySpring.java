@@ -1,6 +1,7 @@
 package org.example.springprojecttodo.repository;
 
 import org.example.springprojecttodo.model.Client;
+import org.example.springprojecttodo.model.ClientStatus;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -18,6 +19,9 @@ public interface ClientRepositorySpring extends JpaRepository<Client, UUID> {
 
     @Query("SELECT COUNT(c) FROM Client c")
     int countClients();
+
+    @Query("SELECT COUNT(c) FROM Client c WHERE c.status = :status")
+    int countClients(ClientStatus status);
 
     @Modifying
     @Query("UPDATE Client c SET c.status = 'INACTIVE' WHERE c.id = :id")

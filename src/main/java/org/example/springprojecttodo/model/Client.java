@@ -31,7 +31,7 @@ public class Client {
     @GeneratedValue
     private UUID id;
 
-    @Size(min = 3, max = 50)
+    @Size(min = 3, max = 20)
     private String name;
 
     private String email;

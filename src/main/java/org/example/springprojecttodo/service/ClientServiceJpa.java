@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import org.example.springprojecttodo.annotation.LogTime;
 import org.example.springprojecttodo.exeption.EntityNotFound;
 import org.example.springprojecttodo.model.Client;
+import org.example.springprojecttodo.model.ClientStatus;
 import org.example.springprojecttodo.repository.ClientRepositorySpring;
 import org.example.springprojecttodo.service.creator.ClientCreator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,10 @@ public class ClientServiceJpa implements ClientServiceI {
 
     public int countClients() {
         return repository.countClients();
+    }
+
+    public int countClients(final ClientStatus status) {
+        return repository.countClients(status);
     }
 
     @Transactional
