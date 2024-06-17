@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -82,5 +83,11 @@ public class ClientServiceJpa implements ClientServiceI {
     @Override
     public Stream<Client> getAll(final Pageable pageable) {
         return repository.findAll(pageable).stream();
+    }
+
+    @Override
+    public Flux<Client> getAllReactive() {
+//        ReactiveCrudRepository
+        return Flux.fromIterable(repository.findAll());
     }
 }

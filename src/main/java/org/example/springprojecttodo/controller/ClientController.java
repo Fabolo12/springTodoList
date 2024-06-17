@@ -24,9 +24,11 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @RestController
@@ -41,7 +43,8 @@ public class ClientController {
     }
 
     @PostMapping
-    public Client createAdmin() {
+    public Client createAdmin() throws InterruptedException {
+        TimeUnit.SECONDS.sleep(5);
         return clientService.createAdmin();
     }
 
@@ -115,6 +118,11 @@ public class ClientController {
     @GetMapping("/count")
     public int clientsCount() {
         return clientService.countClients();
+    }
+
+    @GetMapping("/reactive")
+    public Flux<Client> getAllReactive() throws InterruptedException {
+        return clientService.getAllReactive();
     }
 
     private void checkEmail(final String email) {

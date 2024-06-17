@@ -5,6 +5,8 @@ import org.example.springprojecttodo.model.Client;
 import org.example.springprojecttodo.model.ClientStatus;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -32,4 +34,8 @@ public interface ClientServiceI {
     Stream<Client> getAll(Sort sort);
 
     Stream<Client> getAll(Pageable pageable);
+
+    default Flux<Client> getAllReactive() {
+        return Flux.empty();
+    }
 }

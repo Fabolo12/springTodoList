@@ -6,12 +6,56 @@ import org.example.springprojecttodo.service.ClientServiceI;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import java.util.List;
 
 @SpringBootApplication
 public class SpringProjectTodoApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(SpringProjectTodoApplication.class, args);
+        standardMethods();
+    }
+
+    private static void standardMethods() {
+        final RestTemplate restTemplate = new RestTemplate();
+        restTemplate.exchange(
+                "http://localhost:8080/clients",
+                HttpMethod.POST,
+                null,
+                new ParameterizedTypeReference<>() {
+                }
+        );
+
+        ResponseEntity<List<Client>> response = restTemplate.exchange(
+                "http://localhost:8080/clients",
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<>() {
+                }
+        );
+        System.out.println("Data from standard get:");
+        response.getBody().stream().forEach(System.out::println);
+    }
+
+    private static void reactiveMethods() {
+        WebClient client = WebClient.create("http://localhost:8080");
+
+        client.post().uri("/clients").retrieve().bodyToMono(Client.class)
+                .subscribe(c -> {
+                    System.out.println("Data from reactive create: " + c);
+                    client.get().uri("/clients/reactive").retrieve().bodyToFlux(Client.class)
+                            .subscribe(c1 -> System.out.println("Data from reactive get after create: " + c1));
+                });
+
+
+        client.get().uri("/clients/reactive").retrieve().bodyToFlux(Client.class)
+                .subscribe(c -> System.out.println("Data from reactive get: " + c));
     }
 
     private static void internalUse(final ConfigurableApplicationContext context) {
