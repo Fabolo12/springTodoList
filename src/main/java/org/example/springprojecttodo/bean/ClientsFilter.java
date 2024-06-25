@@ -1,4 +1,4 @@
-package org.example.springprojecttodo.dto;
+package org.example.springprojecttodo.bean;
 
 import lombok.Getter;
 import lombok.Setter;

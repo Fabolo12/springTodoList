@@ -1,40 +1,19 @@
 package org.example.springprojecttodo.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.example.springprojecttodo.SpringProjectTodoApplication;
 import org.example.springprojecttodo.model.Client;
 import org.example.springprojecttodo.service.ClientServiceI;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.UUID;
 
-@AutoConfigureMockMvc
-@SpringBootTest(classes = SpringProjectTodoApplication.class)
-class ClientControllerUnitTest {
-
-    private final MockMvc mockMvc;
-
-    private final ObjectMapper mapper;
+class ClientControllerUnitTest extends AbstractControllerTest {
 
     @MockBean
     private ClientServiceI clientService;
-
-    @Autowired
-    ClientControllerUnitTest(final MockMvc mockMvc, final ObjectMapper mapper) {
-        this.mockMvc = mockMvc;
-        this.mapper = mapper;
-    }
 
     @Test
     void createAdmin() throws Exception {
@@ -112,21 +91,23 @@ class ClientControllerUnitTest {
 
         @Test
         void updateClientBodyWithoutId() throws Exception {
-            mockMvc.perform(prepareRequestBuilder(Client.builder().build()))
+            mockMvc.perform(prepareRequestBuilderPut("/clients", Client.builder().build()))
                     .andExpect(MockMvcResultMatchers.status().isNotAcceptable())
                     .andExpect(MockMvcResultMatchers.content().string("id: must not be null"));
         }
 
         @Test
         void updateClientBodyWithShortName() throws Exception {
-            mockMvc.perform(prepareRequestBuilder(Client.builder().id(UUID.randomUUID()).name("q").build()))
+            mockMvc.perform(prepareRequestBuilderPut("/clients",
+                            Client.builder().id(UUID.randomUUID()).name("q").build()))
                     .andExpect(MockMvcResultMatchers.status().isNotAcceptable())
                     .andExpect(MockMvcResultMatchers.content().string("name: size must be between 3 and 20"));
         }
 
         @Test
         void updateClientBodyWithLongName() throws Exception {
-            mockMvc.perform(prepareRequestBuilder(
+            mockMvc.perform(prepareRequestBuilderPut(
+                            "/clients",
                             Client.builder().id(UUID.randomUUID()).name("q".repeat(21)).build())
                     )
                     .andExpect(MockMvcResultMatchers.status().isNotAcceptable())
@@ -135,19 +116,14 @@ class ClientControllerUnitTest {
 
         @Test
         void updateClient() throws Exception {
-            mockMvc.perform(prepareRequestBuilder(
+            mockMvc.perform(prepareRequestBuilderPut(
+                            "/clients",
                             Client.builder()
                                     .id(UUID.randomUUID())
                                     .name("qwerty")
                                     .build())
                     )
                     .andExpect(MockMvcResultMatchers.status().isOk());
-        }
-
-        private RequestBuilder prepareRequestBuilder(final Client client) throws JsonProcessingException {
-            return MockMvcRequestBuilders.put("/clients")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(mapper.writeValueAsString(client));
         }
     }
 

@@ -2,10 +2,11 @@ package org.example.springprojecttodo.controller;
 
 import jakarta.validation.Valid;
 import org.apache.commons.lang3.StringUtils;
-import org.example.springprojecttodo.dto.ClientsFilter;
+import org.example.springprojecttodo.bean.ClientsFilter;
 import org.example.springprojecttodo.exeption.IllegalUserInputException;
 import org.example.springprojecttodo.model.Client;
 import org.example.springprojecttodo.service.ClientServiceI;
+import org.example.springprojecttodo.shared.MyExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,7 +30,6 @@ import reactor.core.publisher.Flux;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/clients")
@@ -66,13 +66,8 @@ public class ClientController {
     }
 
     @PutMapping
-    public void updateClient(@Valid @RequestBody final Client client, final BindingResult result) {
-        if (result.hasErrors()) {
-            final String errorMessage = result.getFieldErrors().stream()
-                    .map(error -> error.getField() + ": " + error.getDefaultMessage())
-                    .collect(Collectors.joining(", "));
-            throw new IllegalUserInputException(errorMessage);
-        }
+    public void updateClient(@Valid @RequestBody final Client client, final BindingResult bindingResult) {
+        MyExceptionUtils.checkValidationResult(bindingResult);
         clientService.updateClient(client);
     }
 

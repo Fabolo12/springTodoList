@@ -19,7 +19,6 @@ public class SpringProjectTodoApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(SpringProjectTodoApplication.class, args);
-        standardMethods();
     }
 
     private static void standardMethods() {

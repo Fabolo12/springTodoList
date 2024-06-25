@@ -1,7 +1,10 @@
 package org.example.springprojecttodo.service;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.transaction.Transactional;
 import org.example.springprojecttodo.annotation.LogTime;
+import org.example.springprojecttodo.bean.LogInRequestBean;
+import org.example.springprojecttodo.bean.SignUpRequestBean;
 import org.example.springprojecttodo.exeption.EntityNotFound;
 import org.example.springprojecttodo.model.Client;
 import org.example.springprojecttodo.model.ClientStatus;
@@ -14,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
+import java.util.Base64;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -89,5 +93,35 @@ public class ClientServiceJpa implements ClientServiceI {
     public Flux<Client> getAllReactive() {
 //        ReactiveCrudRepository
         return Flux.fromIterable(repository.findAll());
+    }
+
+    public UUID createUser(final SignUpRequestBean signUpRequestBean) {
+        final Client client = Client.builder()
+                .email(signUpRequestBean.email())
+                .password(Base64.getEncoder().encodeToString(signUpRequestBean.password().getBytes()))
+                .name(signUpRequestBean.name())
+                .status(ClientStatus.ACTIVE)
+                .build();
+        repository.save(client);
+        return client.getId();
+    }
+
+
+    public boolean checkLoginAccess(final LogInRequestBean logInRequestBean) {
+        final String password = Base64.getEncoder().encodeToString(logInRequestBean.password().getBytes());
+        return repository.findByEmail(logInRequestBean.email())
+                .map(Client::getPassword)
+                .map(password::equals)
+                .orElse(false);
+    }
+
+    public Cookie createCookie(final String email) {
+        return new Cookie("user", email);
+    }
+
+    public Cookie clearCookie() {
+        final Cookie user = new Cookie("user", null);
+        user.setMaxAge(0);
+        return user;
     }
 }
