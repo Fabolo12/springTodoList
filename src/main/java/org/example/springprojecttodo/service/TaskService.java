@@ -1,15 +1,20 @@
 package org.example.springprojecttodo.service;
 
+import jakarta.annotation.Resource;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.example.springprojecttodo.annotation.LogTime;
+import org.example.springprojecttodo.bean.AllTasksResponseBean;
 import org.example.springprojecttodo.bean.CreateTaskRequestBean;
+import org.example.springprojecttodo.context.TaskContext;
 import org.example.springprojecttodo.model.Client;
 import org.example.springprojecttodo.model.Task;
 import org.example.springprojecttodo.repository.TaskRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -19,6 +24,8 @@ public class TaskService {
 
     private final TaskRepository taskRepository;
 
+    @Resource
+    private TaskContext context;
 
     TaskService(final ClientServiceJpa clientService, final TaskRepository taskRepository) {
         this.clientService = clientService;
@@ -51,8 +58,16 @@ public class TaskService {
         return "Todo";
     }
 
-    public String getTasks() {
-        return "Todo";
+    public List<AllTasksResponseBean> getTasks() {
+//        context.isCompleted()
+        return taskRepository.findAllByClientId(context.getClientId(), context.getPageable()).stream()
+                .map(task -> new AllTasksResponseBean(
+                        task.getId(),
+                        task.getTitle(),
+                        task.isCompleted(),
+                        task.getCreatedAt()
+                ))
+                .toList();
     }
 
 

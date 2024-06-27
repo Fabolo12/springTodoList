@@ -38,4 +38,9 @@ public abstract class AbstractControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(client));
     }
+
+    @SneakyThrows
+    protected RequestBuilder prepareRequestBuilderGet(final String uri) {
+        return MockMvcRequestBuilders.get(uri);
+    }
 }
