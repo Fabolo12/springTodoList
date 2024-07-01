@@ -43,4 +43,9 @@ public abstract class AbstractControllerTest {
     protected RequestBuilder prepareRequestBuilderGet(final String uri) {
         return MockMvcRequestBuilders.get(uri);
     }
+
+    @SneakyThrows
+    protected RequestBuilder prepareRequestBuilderDelete(final String uri) {
+        return MockMvcRequestBuilders.delete(uri);
+    }
 }

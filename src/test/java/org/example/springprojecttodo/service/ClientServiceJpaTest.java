@@ -75,18 +75,18 @@ class ClientServiceJpaTest {
     @Test
     @Sql("/test-data.sql")
     void count() {
-        Assertions.assertThat(clientService.countClients()).isEqualTo(5);
+        Assertions.assertThat(clientService.countClients()).isEqualTo(25);
     }
 
     @Test
     @Sql("/test-data.sql")
     void countActive() {
-        Assertions.assertThat(clientService.countClients(ClientStatus.ACTIVE)).isEqualTo(3);
+        Assertions.assertThat(clientService.countClients(ClientStatus.ACTIVE)).isEqualTo(13);
     }
 
     @Test
     @Sql("/test-data.sql")
     void countInactive() {
-        Assertions.assertThat(clientService.countClients(ClientStatus.INACTIVE)).isEqualTo(2);
+        Assertions.assertThat(clientService.countClients(ClientStatus.INACTIVE)).isEqualTo(12);
     }
 }

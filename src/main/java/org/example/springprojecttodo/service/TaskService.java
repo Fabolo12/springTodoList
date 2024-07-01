@@ -4,16 +4,16 @@ import jakarta.annotation.Resource;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.example.springprojecttodo.annotation.LogTime;
-import org.example.springprojecttodo.bean.AllTasksResponseBean;
 import org.example.springprojecttodo.bean.CreateTaskRequestBean;
+import org.example.springprojecttodo.bean.TasksResponseBean;
 import org.example.springprojecttodo.context.TaskContext;
+import org.example.springprojecttodo.exeption.EntityNotFound;
 import org.example.springprojecttodo.model.Client;
 import org.example.springprojecttodo.model.Task;
 import org.example.springprojecttodo.repository.TaskRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -46,28 +46,60 @@ public class TaskService {
         return task.getId();
     }
 
-    public String editTask() {
-        return "Todo";
+    public TasksResponseBean updateTask(
+            final UUID clientId,
+            final UUID taskId,
+            final CreateTaskRequestBean createTaskRequestBean
+    ) {
+        return taskRepository.findByIdAndClientId(taskId, clientId)
+                .map(task -> {
+                    if (createTaskRequestBean.title() != null) {
+                        task.setTitle(createTaskRequestBean.title());
+                    }
+
+                    if (createTaskRequestBean.description() != null) {
+                        task.setDescription(createTaskRequestBean.description());
+                    }
+                    taskRepository.save(task);
+
+                    return map(task);
+                })
+                .orElseThrow(() -> new EntityNotFound("Task not found with id: " + taskId));
     }
 
-    public String deleteTask() {
-        return "Todo";
+    public boolean deleteTask(
+            final UUID clientId,
+            final UUID taskId
+    ) {
+        return taskRepository.deleteTask(taskId, clientId) > 0;
     }
 
-    public String getTask() {
-        return "Todo";
-    }
-
-    public List<AllTasksResponseBean> getTasks() {
-//        context.isCompleted()
-        return taskRepository.findAllByClientId(context.getClientId(), context.getPageable()).stream()
-                .map(task -> new AllTasksResponseBean(
-                        task.getId(),
-                        task.getTitle(),
-                        task.isCompleted(),
-                        task.getCreatedAt()
-                ))
+    public List<TasksResponseBean> getTasks() {
+        return taskRepository.findAllByClientIdAndCompleted(
+                        context.getClientId(),
+                        context.isCompleted(),
+                        context.getPageable()
+                ).stream()
+                .map(this::map)
                 .toList();
+    }
+
+    public TasksResponseBean getTasks(
+            final UUID clientId,
+            final UUID taskId
+    ) {
+        return taskRepository.findByIdAndClientId(taskId, clientId)
+                .map(this::map)
+                .orElseThrow(() -> new EntityNotFound("Task not found with id: " + taskId));
+    }
+
+    private TasksResponseBean map(final Task task) {
+        return new TasksResponseBean(
+                task.getId(),
+                task.getTitle(),
+                task.isCompleted(),
+                task.getCreatedAt()
+        );
     }
 
 
