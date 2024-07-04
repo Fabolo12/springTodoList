@@ -7,10 +7,12 @@ import org.example.springprojecttodo.annotation.LogTime;
 import org.example.springprojecttodo.bean.CreateTaskRequestBean;
 import org.example.springprojecttodo.bean.TasksResponseBean;
 import org.example.springprojecttodo.context.TaskContext;
+import org.example.springprojecttodo.controller.TaskController;
 import org.example.springprojecttodo.exeption.EntityNotFound;
 import org.example.springprojecttodo.model.Client;
 import org.example.springprojecttodo.model.Task;
 import org.example.springprojecttodo.repository.TaskRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;

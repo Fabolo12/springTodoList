@@ -71,7 +71,7 @@ public class TaskController {
     }
 
     @DeleteMapping("/client/{clientId}/task/{taskId}")
-    public boolean getTasks(
+    public boolean deleteTask(
             @PathVariable final UUID clientId,
             @PathVariable final UUID taskId
     ) {

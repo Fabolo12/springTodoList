@@ -1,5 +1,6 @@
 package org.example.springprojecttodo;
 
+import org.example.springprojecttodo.analytic.CronService;
 import org.example.springprojecttodo.model.Client;
 import org.example.springprojecttodo.model.ClientStatus;
 import org.example.springprojecttodo.service.ClientServiceI;
@@ -9,11 +10,13 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
 
+@EnableScheduling
 @SpringBootApplication
 public class SpringProjectTodoApplication {
 
