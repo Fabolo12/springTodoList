@@ -21,8 +21,13 @@ public class CronService {
 
     private final AnalyticRepository analyticRepository;
 
-    @Value("${analytic.folder}")
+    @Value("${analytic.folder:null}")
     private String folder;
+
+    @Value("${analytic.work:false}")
+    private boolean isAnalyticWork;
+
+
 
     CronService(final AnalyticRepository analyticRepository) {
         this.analyticRepository = analyticRepository;
@@ -30,12 +35,18 @@ public class CronService {
 
     @Scheduled(cron = CRON_EVERY_TEN_SECONDS)
     public void showAmountOfCompletedTask() {
+        if (!isAnalyticWork) {
+            return;
+        }
         final long completedTasks = analyticRepository.countCompletedTasks();
         log.info("Amount of completed tasks: {}", completedTasks);
     }
 
     @Scheduled(cron = CRON_EVERY_TEN_SECONDS)
     public void showAmountTasksByCliente() {
+        if (!isAnalyticWork) {
+            return;
+        }
         final SqlRowSet result = analyticRepository.showInfoByClient();
         final StringBuilder content = new StringBuilder();
         final String pattern = "Client: %s, tasks: %d, completed: %d, not completed: %d%n";

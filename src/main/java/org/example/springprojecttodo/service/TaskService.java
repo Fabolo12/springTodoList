@@ -7,12 +7,11 @@ import org.example.springprojecttodo.annotation.LogTime;
 import org.example.springprojecttodo.bean.CreateTaskRequestBean;
 import org.example.springprojecttodo.bean.TasksResponseBean;
 import org.example.springprojecttodo.context.TaskContext;
-import org.example.springprojecttodo.controller.TaskController;
+import org.example.springprojecttodo.controller.mapper.TaskMapper;
 import org.example.springprojecttodo.exeption.EntityNotFound;
 import org.example.springprojecttodo.model.Client;
 import org.example.springprojecttodo.model.Task;
 import org.example.springprojecttodo.repository.TaskRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -64,7 +63,7 @@ public class TaskService {
                     }
                     taskRepository.save(task);
 
-                    return map(task);
+                    return TaskMapper.INSTANCE.toTasksResponseBean(task);
                 })
                 .orElseThrow(() -> new EntityNotFound("Task not found with id: " + taskId));
     }
@@ -82,7 +81,7 @@ public class TaskService {
                         context.isCompleted(),
                         context.getPageable()
                 ).stream()
-                .map(this::map)
+                .map(TaskMapper.INSTANCE::toTasksResponseBean)
                 .toList();
     }
 
@@ -91,18 +90,8 @@ public class TaskService {
             final UUID taskId
     ) {
         return taskRepository.findByIdAndClientId(taskId, clientId)
-                .map(this::map)
+                .map(TaskMapper.INSTANCE::toTasksResponseBean)
                 .orElseThrow(() -> new EntityNotFound("Task not found with id: " + taskId));
     }
-
-    private TasksResponseBean map(final Task task) {
-        return new TasksResponseBean(
-                task.getId(),
-                task.getTitle(),
-                task.isCompleted(),
-                task.getCreatedAt()
-        );
-    }
-
 
 }
